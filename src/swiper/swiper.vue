@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" :class="rootClass">
+  <div ref="root" :class="[...rootClass, `${isBottomPagination ? `${name}--${navigation.placement}` : ''}`]">
     <div
       ref="swiperContainer"
       :class="`${name}__container`"
@@ -26,6 +26,7 @@
           `${navName}--${direction}`,
           `${navName}__${navigation.type || ''}`,
           `${navName}--${navigation.paginationPosition || 'bottom'}`,
+          `${isBottomPagination ? `${navName}--${navigation.placement}` : ''}`,
         ]"
       >
         <template v-if="['dots', 'dots-bar'].includes(navigation.type || '')">
@@ -121,6 +122,17 @@ const enableNavigation = computed(() => {
     return navigation.value?.minShowNum ? items.value.length >= navigation.value?.minShowNum : true;
   }
   return false;
+});
+
+const isBottomPagination = computed(() => {
+  let isShowSwiperNav = false;
+  if (typeof props.navigation === 'object') {
+    isShowSwiperNav =
+      (!navigation.value?.paginationPosition || navigation.value?.paginationPosition === 'bottom') &&
+      (navigation.value?.type === 'dots' || navigation.value?.type === 'dots-bar') &&
+      enableNavigation?.value;
+  }
+  return isShowSwiperNav;
 });
 
 let autoplayTimer: any = null;
